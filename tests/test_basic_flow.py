@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import stim
 
 from hypergraphify import (
@@ -8,19 +6,15 @@ from hypergraphify import (
     TransformationVerifier,
 )
 
-
 def test_hyperedge_detection_and_verify():
-    dem = stim.DetectorErrorModel()
-    dem.append_error(
-        0.1,
-        [
-            stim.DemTarget.relative_detector_id(0),
-            stim.DemTarget.relative_detector_id(1),
-            stim.DemTarget.relative_detector_id(2),
-        ],
-    )
+    dem = stim.DetectorErrorModel("""
+        error(0.1) D0 D1 D2
+        detector D0
+        detector D1
+        detector D2
+        logical_observable L0
+    """.strip())
 
-    # hyper-edge detection
     hyperedges = detect_hyperedges(dem)
     assert len(hyperedges) == 1
     assert hyperedges[0].detector_ids == (0, 1, 2)
